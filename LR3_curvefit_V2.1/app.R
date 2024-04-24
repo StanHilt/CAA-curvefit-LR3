@@ -624,9 +624,6 @@ ui <- fluidPage(
                      tableOutput("full"))
         )
     ),
-     # WHERE YOUR FOOTER GOES
-        hr(),
-        print("~~~my disclaimer~~~~")
 )
 )
 # Define server logic required to draw a histogram
