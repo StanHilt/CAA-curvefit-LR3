@@ -55,7 +55,11 @@ peaks_graph_smooth <- function(df_tidy, df_tidy_smooth){
     ggplot2::labs(x = "Position in Strip (mm)", 
                   y = "Signal Intensity") +
     ggplot2::scale_color_manual(values = c("black", "red"),
-                                labels = c("Raw Data", "Smooth Data"))
+                                labels = c("Raw Data", "Background Corrected"))+
+    ggplot2::theme(legend.position = "top",
+                   legend.text = element_text(size = 15),
+                   legend.title = element_blank(),
+                   strip.text = element_text(size = 15))
   return(peaks_graph_smooth)
 }
 
@@ -182,7 +186,7 @@ plot_list_all <-function(peaks_smooth, df_tidy_smooth, peaks_list){
       ggplot2::geom_line(linewidth = 0.5) +
       ggplot2::geom_point(data = df_test[peak_test[3:8], ], 
                           color = "red",
-                          size = 0.9) +
+                          size = 1.6) +
       ggplot2::labs(title = paste("strip", i),
                     x = "Strip Position",
                     y = "Smooth Signal Intensity",
@@ -341,12 +345,14 @@ std_df<-function(peaks_data_standard){
 averageplot<- function(standard_df){
   plot <- ggplot2::ggplot(data=standard_df, 
                           aes(x=CAA, y=`T/C ratio`)) +
-    ggplot2::geom_point(color = "indianred", size = 2, alpha = 0.8) +
+    ggplot2::geom_point(color = "indianred", size = 4, alpha = 0.8) +
     ggplot2::scale_x_continuous(trans = 
                                   'log10') +
     ggplot2::scale_y_continuous(trans = 
                                   'log10') +
-    ggplot2::theme_minimal() 
+    ggplot2::theme_minimal() +
+    ggplot2::theme(axis.title.x = element_text(size = 20),
+                   axis.title.y = element_text(size = 20))
   
   
   return(plot)
@@ -546,7 +552,7 @@ delete_points <- function(df, input) {
 ui <- fluidPage(
 
     # Application title
-    titlePanel("LR3 analysis v2.1"),
+    titlePanel("LR3 analysis v2.2"),
 
     # Sidebar with a slider input for number of bins 
     sidebarLayout(
@@ -593,14 +599,14 @@ ui <- fluidPage(
         # Show a plot of the generated distribution
         mainPanel(
           tabsetPanel(
-            tabPanel("Raw and smoothed scans", 
+            tabPanel("Background Correction", 
                      fluidRow(
                        column(10, plotOutput("rawvssmooth")),
                        column(2, downloadButton("downloadrawvssmooth", "Download plot")),
                        verbatimTextOutput("x")
                      )
                      ),
-            tabPanel("All peaks", 
+            tabPanel("Peak Detection", 
                      fluidRow(
                      column(10, plotOutput("plotlistall")),
                      column(2, downloadButton("downloadPeaks", "Download plot")))
@@ -880,8 +886,8 @@ server <- function(input, output, session) {
  
   output$standardaverage <-
     renderPlot(averageplot(standard_df()),
-               width = 900,
-               height = 900)
+               width = 800,
+               height = 800)
   
   curvemodel <- reactive({
     req(df())
