@@ -65,7 +65,7 @@ peak_list_ctrl <- function(peaks_smooth, range) {
     output <- pracma::findpeaks(peaks_smooth[range[1]:range[2], i],
                                 nups = 2, ndowns = 2, 
                                 npeaks = 1,
-                                minpeakheight = 10,
+                                minpeakheight = 100,
                                 threshold = 10,
                                 zero = "0"
     )
@@ -83,8 +83,8 @@ test_peak_detect <- function(peak_list_ctrl, peaks_smooth){
   
   a <- as.numeric(unlist(a))
   
-  b <- a - 160
-  c <- a - 40
+  b <- a - 130
+  c <- a - 50
   
   #range start (b) and end (c) vectors
   b <- min(b)
@@ -96,9 +96,9 @@ test_peak_detect <- function(peak_list_ctrl, peaks_smooth){
   # Detection of the test peak
   for (i in seq_along(peaks_smooth[b:c,])) {
     output <- pracma::findpeaks(peaks_smooth[b:c,i],
-                                nups = 2, ndowns = 2, 
+                                nups = 3, ndowns = 3, 
                                 npeaks = 1,
-                                minpeakheight = 7
+                                minpeakheight = 5
     )
     peak_list_test[[i]] <- output
   }
@@ -457,16 +457,16 @@ resultfile <- function(peaks_data_export, a, peaks_data_standard, exclude, assay
   results_df$Result <- NA #make new column for printing the result
   lower_st <- tail(which(!is.na(curve)), 1)
   cut_off <- if(assay == "1"){
-    6
+    20 #adjust to dry please
   }else{
     if(assay == "2"){
-      0.6
+      2
     }else{
       if(assay == "3"){
-        10
+        30
       }else{
         if(assay == "4"){
-          1
+          3
         }
       }
     }
@@ -572,7 +572,7 @@ ui <- fluidPage(
           sliderInput(
             "range", 
             label = h4("Set control peak detection range"),
-            min = 180, max = 375, value = c(180,350)
+            min = 165, max = 375, value = c(165,350)
           ),
           textInput(
             "exclude", 
